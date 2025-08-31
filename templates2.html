@@ -1,0 +1,2432 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Triangle & Trigonometry Calculator</title>
+    <style>
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 20px;
+            background-color: #f5f7fa;
+            color: #333;
+            transition: background 0.3s, color 0.3s;
+        }
+        body.dark-mode {
+            background: #222;
+            color: #eee;
+        }
+        .container {
+            background-color: white;
+            border-radius: 10px;
+            padding: 25px;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+            transition: background 0.3s;
+        }
+        .container.dark-mode {
+            background: #333;
+        }
+        h1 {
+            color: #2c3e50;
+            text-align: center;
+            margin-bottom: 30px;
+        }
+        .output {
+            background-color: #f8f9fa;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+            padding: 15px;
+            margin-top: 20px;
+            min-height: 200px;
+            white-space: pre-wrap;
+            font-family: monospace;
+        }
+        .output .result {
+            font-weight: bold;
+            color: #27ae60;
+        }
+        .controls {
+            margin-top: 20px;
+            text-align: center;
+        }
+        button {
+            background-color: #3498db;
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 16px;
+            transition: background-color 0.3s;
+        }
+        button:hover {
+            background-color: #2980b9;
+        }
+        .status {
+            margin-top: 15px;
+            text-align: center;
+            font-style: italic;
+            color: #7f8c8d;
+        }
+        .instructions {
+            background-color: #eaf2f8;
+            border-left: 4px solid #3498db;
+            padding: 5px 7px;
+            margin-bottom: 10px;
+        }
+        .input-container {
+            margin-top: 20px;
+            padding: 15px;
+            background-color: #f8f9fa;
+            border-radius: 5px;
+            border: 1px solid #ddd;
+            display: none;
+        }
+        .input-container input {
+            width: 70%;
+            padding: 8px;
+            border: 1px solid #ccc;
+            border-radius: 4px;
+        }
+        .input-container input.error {
+            border-color: red;
+        }
+        .input-container button {
+            margin-left: 10px;
+            padding: 8px 15px;
+        }
+        .menu-container {
+            margin-top: 20px;
+            padding: 15px;
+            background-color: #f8f9fa;
+            border-radius: 5px;
+            border: 1px solid #ddd;
+            display: none;
+        }
+        .menu-button {
+            display: block;
+            width: 100%;
+            margin: 10px 0;
+            padding: 10px;
+            text-align: left;
+        }
+        .menu-button:hover {
+            background-color: #e1f0fa;
+        }
+        .history {
+            margin-top: 20px;
+            background: #eaf2f8;
+            border-radius: 5px;
+            padding: 10px;
+            border: 1px solid #3498db;
+            max-height: 150px;
+            overflow-y: auto;
+            font-size: 14px;
+        }
+        .copy-btn {
+            background: #27ae60;
+            color: #fff;
+            border: none;
+            padding: 4px 10px;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 13px;
+            margin-left: 10px;
+        }
+        /* Quiz Styles */
+        .quiz-section {
+            margin-top: 30px;
+            padding: 20px;
+            background: #f8f9fa;
+            border-radius: 8px;
+            border: 1px solid #ddd;
+        }
+        .quiz-q {
+            font-size: 17px;
+            font-weight: bold;
+            margin-bottom: 15px;
+        }
+        .quiz-opt-list {
+            list-style: none;
+            padding: 0;
+        }
+        .quiz-opt-list li {
+            margin: 8px 0;
+        }
+        .quiz-opt-btn {
+            width: 100%;
+            padding: 8px;
+            background: #3498db;
+            color: #fff;
+            border: none;
+            border-radius: 4px;
+            text-align: left;
+            font-size: 16px;
+            cursor: pointer;
+            transition: background 0.2s;
+        }
+        .quiz-opt-btn:hover {
+            background: #2980b9;
+        }
+        .quiz-feedback {
+            margin-top: 10px;
+            font-weight: bold;
+        }
+        .quiz-score {
+            font-size: 18px;
+            color: #2e7d32;
+            margin: 15px 0;
+        }
+        .quiz-next-btn {
+            background: #2e7d32;
+            margin-top: 15px;
+        }
+        .quiz-next-btn:hover {
+            background: #256c25;
+        }
+        body.dark-mode {
+        background: #181f2a;
+        color: #e0e6ed;
+        }
+        .container.dark-mode {
+            background: #222e3c;
+        }
+        .output.dark-mode,
+        .history.dark-mode,
+        .input-container.dark-mode,
+        .menu-container.dark-mode,
+        .quiz-section.dark-mode {
+            background: #232b3e;
+            color: #e0e6ed;
+            border-color: #295184;
+        }
+        button.dark-mode,
+        .quiz-opt-btn.dark-mode,
+        .quiz-next-btn.dark-mode {
+            background-color: #2e5a88;
+            color: #e0e6ed;
+        }
+        button.dark-mode:hover,
+        .quiz-opt-btn.dark-mode:hover,
+        .quiz-next-btn.dark-mode:hover {
+            background-color: #295184;
+        }
+        .quiz-quit-btn {
+            background: #c0392b;
+            color: #fff;
+            border: none;
+            padding: 8px 18px;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 16px;
+            margin-top: 10px;
+            transition: background 0.2s;
+        }
+        .quiz-quit-btn:hover {
+            background: #922b21;
+        }
+	
+    </style>
+</head>
+<body>
+    <div class="container" id="mainContainer">
+        <h1>Triangle & Trigonometry Calculator</h1>
+        
+        <div class="instructions">
+            <p>This calculator helps you solve triangle and trigonometry problems. Click "Start Calculator" to begin. You can also try a quiz!</p>
+        </div>
+        
+        <div class="controls">
+            <button id="runButton">Start Calculator</button>
+            <button id="resetButton" aria-label="Reset Calculator">Reset Calculator</button>
+            <button id="darkModeToggle">Toggle Dark Mode</button>
+            <button id="startQuizBtn">Start Quiz</button>
+        </div>
+        
+        <div class="output" id="output" aria-live="polite"></div>
+        <div class="history" id="history"></div>
+        <div class="status" id="status">Ready to start</div>
+        
+        <div class="input-container" id="inputContainer">
+            <input type="text" id="userInput" placeholder="Enter your response" aria-label="Calculation Input">
+            <button id="submitInput">Submit</button>
+            <span id="inputError" style="color:red; font-size:13px; margin-left:10px;"></span>
+        </div>
+        
+        <div class="menu-container" id="menuContainer">
+            <button class="menu-button" data-mode="1">Sides and Perimeter of a Triangle</button>
+            <button class="menu-button" data-mode="2">Base, Height and Area of Triangle</button>
+            <button class="menu-button" data-mode="3">Sides and Area of Triangle (Heron's Formula)</button>
+            <button class="menu-button" data-mode="4">Sides of Right Angle Triangle and its Area</button>
+            <button class="menu-button" data-mode="5">Sides of Right Angle Triangle and its Perimeter</button>
+            <button class="menu-button" data-mode="6">Trigonometry</button>
+            <button class="menu-button" data-mode="theory">Triangle Theory & Formulas</button>
+        </div>
+        <div class="quiz-section" id="quizSection" style="display:none"></div>
+    </div>
+    <script>
+        // Merged Calculator + Quiz JavaScript
+        // --- Calculator logic ---
+        // ... (See previous messages for the full code, or let me know if you want it pasted out in full here for copy-paste) ...
+        // --- Quiz logic ---
+        const output = document.getElementById('output');
+        const status = document.getElementById('status');
+        const runButton = document.getElementById('runButton');
+        const resetButton = document.getElementById('resetButton');
+        const darkModeToggle = document.getElementById('darkModeToggle');
+        const inputContainer = document.getElementById('inputContainer');
+        const userInput = document.getElementById('userInput');
+        const submitInput = document.getElementById('submitInput');
+        const inputError = document.getElementById('inputError');
+        const menuContainer = document.getElementById('menuContainer');
+        const menuButtons = document.querySelectorAll('.menu-button');
+        const history = document.getElementById('history');
+        const mainContainer = document.getElementById('mainContainer');
+        const quizSection = document.getElementById('quizSection');
+        const startQuizBtn = document.getElementById('startQuizBtn');
+        let currentMode = null;
+        let step = 0;
+        let data = {};
+
+       // Dark mode toggle
+        darkModeToggle.addEventListener('click', () => {
+            document.body.classList.toggle('dark-mode');
+            mainContainer.classList.toggle('dark-mode');
+            document.getElementById('output').classList.toggle('dark-mode');
+            document.getElementById('history').classList.toggle('dark-mode');
+            document.getElementById('inputContainer').classList.toggle('dark-mode');
+            document.getElementById('menuContainer').classList.toggle('dark-mode');
+            document.getElementById('quizSection').classList.toggle('dark-mode');
+            document.querySelectorAll('button').forEach(btn => btn.classList.toggle('dark-mode'));
+            document.querySelectorAll('.quiz-opt-btn').forEach(btn => btn.classList.toggle('dark-mode'));
+            document.querySelectorAll('.quiz-next-btn').forEach(btn => btn.classList.toggle('dark-mode'));
+        });
+
+        // --- REPAIRED HISTORY SYSTEM STARTS HERE ---
+
+        // Reset functionality: Only clear history when "Reset Calculator" is clicked
+        resetButton.addEventListener('click', () => {
+            history.innerHTML = ''; // Clear history ONLY on reset
+            fullReset();
+        });
+
+        function fullReset() {
+            output.innerHTML = '';
+            status.textContent = 'Ready to start';
+            inputContainer.style.display = 'none';
+            menuContainer.style.display = 'none';
+            userInput.value = '';
+            inputError.textContent = '';
+            userInput.classList.remove('error');
+            // DO NOT clear history here!
+            data = {};
+            step = 0;
+        }
+
+        // Function to add text to output and make result copyable
+        function addOutput(text, isResult=false) {
+            const line = document.createElement('div');
+            if (isResult) {
+                const resultSpan = document.createElement('span');
+                resultSpan.className = 'result';
+                resultSpan.textContent = text;
+                line.appendChild(resultSpan);
+
+                const copyBtn = document.createElement('button');
+                copyBtn.className = 'copy-btn';
+                copyBtn.textContent = 'Copy';
+                copyBtn.onclick = () => {
+                    navigator.clipboard.writeText(text);
+                };
+                line.appendChild(copyBtn);
+            } else {
+                line.textContent = text;
+            }
+            output.appendChild(line);
+        }
+
+        // Add calculation to history
+        function addToHistory(text) {
+            const entry = document.createElement('div');
+            entry.textContent = text;
+            history.appendChild(entry);
+        }
+
+        // Function to speak (simulated)
+        function speak(text, isResult=false) {
+            addOutput(text, isResult);
+            addToHistory(text);
+            if ('speechSynthesis' in window) {
+                window.speechSynthesis.cancel(); // Prevent overlapping
+                const utter = new SpeechSynthesisUtterance(text);
+                utter.rate = 1;
+                utter.volume = 1;
+                window.speechSynthesis.speak(utter);
+            }
+        }
+
+        // Error feedback
+        function showInputError(msg) {
+            userInput.classList.add('error');
+            inputError.textContent = msg;
+            status.textContent = msg;
+        }
+        function clearInputError() {
+            userInput.classList.remove('error');
+            inputError.textContent = '';
+            status.textContent = '';
+        }
+
+        submitInput.addEventListener('click', processInput);
+        userInput.addEventListener('keypress', (e) => {
+            if (e.key === 'Enter') processInput();
+        });
+
+        menuButtons.forEach(button => {
+            button.addEventListener('click', () => {
+                currentMode = button.dataset.mode;
+                menuContainer.style.display = 'none';
+                startMode();
+            });
+        });
+
+        function isValidNumber(val) {
+            return !isNaN(parseFloat(val)) && isFinite(val) && val !== '' && Number(val) > 0;
+        }
+
+        function processInput() {
+            clearInputError();
+            const input = userInput.value.trim();
+            userInput.value = '';
+            inputContainer.style.display = 'none';
+
+            if (currentMode === '1') processMode1(input);
+            else if (currentMode === '2') processMode2(input);
+            else if (currentMode === '3') processMode3(input);
+            else if (currentMode === '4') processMode4(input);
+            else if (currentMode === '5') processMode5(input);
+            else if (currentMode === '6') processMode6(input);
+        }
+        
+        runButton.addEventListener('click', () => {
+            fullReset();
+            speak("Welcome to the Triangle and Trigonometry Voice Calculator!");
+            speak("Select your choice below");
+            menuContainer.style.display = 'block';
+            status.textContent = 'Select an option';
+        });
+        
+        function afterCalculation() {
+            speak('Calculation complete. Click "Start Calculator" to begin again, or select a new menu option.', false);
+        }
+
+        function startMode() {
+            step = 0;
+            data = {};
+            userInput.value = '';
+            clearInputError();
+
+            if (currentMode === '1') {
+                speak("You selected: Sides and Perimeter of a Triangle");
+                speak("Enter first side (>0)");
+                inputContainer.style.display = 'block';
+                userInput.placeholder = "Enter first side";
+                userInput.focus();
+            } else if (currentMode === '2') {
+                speak("You selected: Base, Height and Area of Triangle");
+                speak("Enter first term: base, height, or area");
+                inputContainer.style.display = 'block';
+                userInput.placeholder = "Enter first term (base, height, or area)";
+                userInput.focus();
+            } else if (currentMode === '3') {
+                // FIX: Now prompts for value name, not always 'side a'
+                speak("You selected: Sides and Area of Triangle (Heron's Formula).");
+                speak("You can provide any three of these: side a, side b, side c, or area.");
+                speak("Enter the name of your first known value (e.g., 'side a', 'side b', 'side c', or 'area').");
+                inputContainer.style.display = 'block';
+                userInput.placeholder = "side a, side b, side c, or area";
+                userInput.focus();
+                step = 0; // Will go to processMode3(input) step 0
+                data = {};
+                data.knownNames = [];
+                data.knownValues = [];
+            } else if (currentMode === '4') {
+                speak("You selected: Sides of Right Angle Triangle and its Area");
+                speak("Enter first term: base, perpendicular or area");
+                inputContainer.style.display = 'block';
+                userInput.placeholder = "Enter first term (base, perpendicular, or area)";
+                userInput.focus();
+            } else if (currentMode === '5') {
+                speak("You selected: Sides of Right Angle Triangle and its Perimeter");
+                speak("Enter first term: base, perpendicular or hypotenuse");
+                inputContainer.style.display = 'block';
+                userInput.placeholder = "Enter first term (base, perpendicular, or hypotenuse)";
+                userInput.focus();
+            } else if (currentMode === '6') {
+                speak("You selected: Trigonometry");
+                speak("Enter base");
+                inputContainer.style.display = 'block';
+                userInput.placeholder = "Enter base";
+                userInput.focus();
+            } else if (currentMode === 'theory') {
+                showTheory();
+            }
+        }
+        
+        function processMode1(input) {
+            if (step === 0) {
+                if (!isValidNumber(input)) {
+                    showInputError("Invalid number. Please enter a valid side (>0).");
+                    inputContainer.style.display = 'block';
+                    userInput.focus();
+                    return;
+                }
+                data.side1 = parseFloat(input);
+                speak("Enter second side (>0)");
+                inputContainer.style.display = 'block';
+                userInput.placeholder = "Enter second side";
+                userInput.focus();
+                step = 1;
+            } else if (step === 1) {
+                if (!isValidNumber(input)) {
+                    showInputError("Invalid number. Please enter a valid side (>0).");
+                    inputContainer.style.display = 'block';
+                    userInput.focus();
+                    return;
+                }
+                data.side2 = parseFloat(input);
+                speak("Enter third side or perimeter (>0)");
+                inputContainer.style.display = 'block';
+                userInput.placeholder = "Enter third side or perimeter";
+                userInput.focus();
+                step = 2;
+            } else if (step === 2) {
+                if (!isValidNumber(input)) {
+                    showInputError("Invalid number. Please enter a valid value (>0).");
+                    inputContainer.style.display = 'block';
+                    userInput.focus();
+                    return;
+                }
+                data.side3_or_perimeter = parseFloat(input);
+                speak("Enter what you want: third side or perimeter");
+                inputContainer.style.display = 'block';
+                userInput.placeholder = "Enter 'third side' or 'perimeter'";
+                userInput.focus();
+                step = 3;
+            } else if (step === 3) {
+                if (input.toLowerCase().includes('third')) {
+                    const result = data.side3_or_perimeter - (data.side1 + data.side2);
+                    speak(`The third side is ${result.toFixed(2)}`, true);
+                } else if (input.toLowerCase().includes('perimeter')) {
+                    const result = data.side1 + data.side2 + data.side3_or_perimeter;
+                    speak(`The perimeter is ${result.toFixed(2)}`, true);
+                } else {
+                    speak("Invalid input. Restart program.");
+                }
+                status.textContent = 'Calculation complete';
+                afterCalculation();
+            }
+        }
+        
+        function processMode2(input) {
+            if (step === 0) {
+                data.term1 = input.toLowerCase();
+                speak(`Enter value of ${data.term1} (>0)`);
+                inputContainer.style.display = 'block';
+                userInput.placeholder = `Enter value of ${data.term1}`;
+                userInput.focus();
+                step = 1;
+            } else if (step === 1) {
+                if (!isValidNumber(input)) {
+                    showInputError("Invalid number. Please enter a valid value (>0).");
+                    inputContainer.style.display = 'block';
+                    userInput.focus();
+                    return;
+                }
+                data.val1 = parseFloat(input);
+                speak("Enter second term (base, height, or area)");
+                inputContainer.style.display = 'block';
+                userInput.placeholder = "Enter second term";
+                userInput.focus();
+                step = 2;
+            } else if (step === 2) {
+                data.term2 = input.toLowerCase();
+                speak(`Enter value of ${data.term2} (>0)`);
+                inputContainer.style.display = 'block';
+                userInput.placeholder = `Enter value of ${data.term2}`;
+                userInput.focus();
+                step = 3;
+            } else if (step === 3) {
+                if (!isValidNumber(input)) {
+                    showInputError("Invalid number. Please enter a valid value (>0).");
+                    inputContainer.style.display = 'block';
+                    userInput.focus();
+                    return;
+                }
+                data.val2 = parseFloat(input);
+                speak("Enter what you want to find (base, height, or area)");
+                inputContainer.style.display = 'block';
+                userInput.placeholder = "Enter what you want to find";
+                userInput.focus();
+                step = 4;
+            } else if (step === 4) {
+                const demand = input.toLowerCase();
+                const termMap = {};
+                termMap[data.term1] = data.val1;
+                termMap[data.term2] = data.val2;
+                
+                if (demand.includes('area') && termMap.base && termMap.height) {
+                    const area = 0.5 * termMap.base * termMap.height;
+                    speak(`Area is ${area.toFixed(2)} square units`, true);
+                } else if (demand.includes('base') && termMap.area && termMap.height) {
+                    const base = (2 * termMap.area) / termMap.height;
+                    speak(`Base is ${base.toFixed(2)}`, true);
+                } else if (demand.includes('height') && termMap.area && termMap.base) {
+                    const height = (2 * termMap.area) / termMap.base;
+                    speak(`Height is ${height.toFixed(2)}`, true);
+                } else {
+                    speak("Invalid input. Restart program.");
+                }
+                status.textContent = 'Calculation complete';
+                afterCalculation();
+            }
+        }
+
+        function processMode3(input) {
+            // step 0: ask for first value name
+            if (step === 0) {
+                let valName = input.trim().toLowerCase();
+                let allowed = ['side a', 'side b', 'side c', 'area'];
+                if (!allowed.includes(valName)) {
+                    showInputError("Name must be: side a, side b, side c, or area.");
+                    inputContainer.style.display = 'block';
+                    userInput.focus();
+                    return;
+                }
+                data.knownNames = [valName];
+                data.knownValues = [];
+                speak(`Enter the value for ${valName} (>0)`);
+                inputContainer.style.display = 'block';
+                userInput.placeholder = `Enter value for ${valName}`;
+                userInput.focus();
+                step = 1;
+            } else if (step === 1 || step === 3 || step === 5) {
+                // expect value for knownNames.length-1
+                if (!isValidNumber(input)) {
+                    showInputError("Invalid number. Please enter a valid number (>0).");
+                    inputContainer.style.display = 'block';
+                    userInput.focus();
+                    return;
+                }
+                data.knownValues.push(parseFloat(input));
+                if (data.knownNames.length < 3) {
+                    speak("Enter the name of your next known value.");
+                    inputContainer.style.display = 'block';
+                    userInput.placeholder = "side a, side b, side c, or area";
+                    userInput.focus();
+                    step++;
+                } else {
+                    // got 3 knowns
+                    speak("What do you want to find? Enter: side a, side b, side c, or area.");
+                    inputContainer.style.display = 'block';
+                    userInput.placeholder = "side a, side b, side c, or area";
+                    inputContainer.focus;
+                    step = 6;
+                }
+            } else if (step === 2 || step === 4) {
+                let valName = input.trim().toLowerCase();
+                let allowed = ['side a', 'side b', 'side c', 'area'];
+                if (!allowed.includes(valName)) {
+                    showInputError("Name must be: side a, side b, side c, or area.");
+                    inputContainer.style.display = 'block';
+                    userInput.focus();
+                    return;
+                }
+                if (data.knownNames.includes(valName)) {
+                    showInputError("You already entered this value. Please enter a different one.");
+                    inputContainer.style.display = 'block';
+                    userInput.focus();
+                    return;
+                }
+                data.knownNames.push(valName);
+                speak(`Enter the value for ${valName} (>0)`);
+                inputContainer.style.display = 'block';
+                userInput.placeholder = `Enter value for ${valName}`;
+                userInput.focus();
+                step++;
+            } else if (step === 6) {
+                let findName = input.trim().toLowerCase();
+                let allowed = ['side a', 'side b', 'side c', 'area'];
+                if (!allowed.includes(findName)) {
+                    showInputError("You can only solve for: side a, side b, side c, or area.");
+                    inputContainer.style.display = 'block';
+                    userInput.focus();
+                    return;
+                }
+                if (data.knownNames.includes(findName)) {
+                    speak("You already provided this value. Please restart and leave out the value you want to find.");
+                    status.textContent = 'Calculation incomplete';
+                    return;
+                }
+                // Map knowns
+                let known = {};
+                for (let i = 0; i < 3; i++) known[data.knownNames[i]] = data.knownValues[i];
+
+                // 1. Solve for area (all three sides known)
+                if (findName === 'area' &&
+                    'side a' in known && 'side b' in known && 'side c' in known) {
+                    let a = known['side a'], b = known['side b'], c = known['side c'];
+                    let s = (a + b + c) / 2;
+                    let area = Math.sqrt(s * (s - a) * (s - b) * (s - c));
+                    if (isNaN(area) || area <= 0) {
+                        speak("Invalid triangle sides. The area could not be calculated. Please check the side lengths.");
+                    } else {
+                        speak(`The area of the triangle is ${area.toFixed(2)} square units (using Heron's formula).`, true);
+                    }
+                    status.textContent = 'Calculation complete';
+                    afterCalculation();
+                    return;
+                }
+                // 2. Solve for missing side (two sides and area known)
+                if (findName.startsWith('side') && 'area' in known) {
+                    // Which sides do we have?
+                    let sideNames = ['side a', 'side b', 'side c'].filter(n => n !== findName && n in known);
+                    if (sideNames.length !== 2) {
+                        speak("To solve for a side, provide area and the other two sides.");
+                        status.textContent = 'Calculation incomplete';
+                        return;
+                    }
+                    let x = known[sideNames[0]], y = known[sideNames[1]], area = known['area'];
+                    // Numerically solve for z (the missing side)
+                    let low = Math.abs(x - y) + 1e-6, high = x + y - 1e-6, found = null;
+                    for (let z = low; z <= high; z += 0.001) {
+                        let s = (x + y + z) / 2;
+                        let areaTry = Math.sqrt(s * (s - x) * (s - y) * (s - z));
+                        if (Math.abs(areaTry - area) < 0.02) {
+                            found = z;
+                            break;
+                        }
+                    }
+                    if (found) {
+                        speak(`The value of ${findName} is approximately ${found.toFixed(2)}`, true);
+                    } else {
+                        speak("Couldn't find a valid value for that side with the given inputs.");
+                    }
+                    status.textContent = 'Calculation complete';
+                    afterCalculation();
+                    return;
+                }
+                // 3. If not enough data or wrong combo:
+                speak("This combination is not supported or not enough valid values were provided. To find area, provide all three sides. To find a side, provide area and the other two sides.");
+                status.textContent = 'Calculation incomplete';
+            }
+        }
+
+        function processMode4(input) {
+            if (step === 0) {
+                data.term1 = input.toLowerCase();
+                speak(`Enter value of ${data.term1} (>0)`);
+                inputContainer.style.display = 'block';
+                userInput.placeholder = `Enter value of ${data.term1}`;
+                userInput.focus();
+                step = 1;
+            } else if (step === 1) {
+                if (!isValidNumber(input)) {
+                    showInputError("Invalid number. Please enter a valid value (>0).");
+                    inputContainer.style.display = 'block';
+                    userInput.focus();
+                    return;
+                }
+                data.value1 = parseFloat(input);
+                speak("Enter second term (base, perpendicular, hypotenuse, or area)");
+                inputContainer.style.display = 'block';
+                userInput.placeholder = "Enter second term";
+                userInput.focus();
+                step = 2;
+            } else if (step === 2) {
+                data.term2 = input.toLowerCase();
+                speak(`Enter value of ${data.term2} (>0)`);
+                inputContainer.style.display = 'block';
+                userInput.placeholder = `Enter value of ${data.term2}`;
+                userInput.focus();
+                step = 3;
+            } else if (step === 3) {
+                if (!isValidNumber(input)) {
+                    showInputError("Invalid number. Please enter a valid value (>0).");
+                    inputContainer.style.display = 'block';
+                    userInput.focus();
+                    return;
+                }
+                data.value2 = parseFloat(input);
+                speak("Enter what you want to find");
+                inputContainer.style.display = 'block';
+                userInput.placeholder = "Enter what you want to find";
+                userInput.focus();
+                step = 4;
+            } else if (step === 4) {
+                const demand = input.toLowerCase();
+                const terms = [data.term1, data.term2];
+
+                let base, perp, hyp, area;
+
+                if (terms.includes("base")) base = data.term1 === "base" ? data.value1 : data.value2;
+                if (terms.includes("perpendicular")) perp = data.term1 === "perpendicular" ? data.value1 : data.value2;
+                if (terms.includes("hypotenuse")) hyp = data.term1 === "hypotenuse" ? data.value1 : data.value2;
+                if (terms.includes("area")) area = data.term1 === "area" ? data.value1 : data.value2;
+
+                if (demand.includes("area")) {
+                    if (base && perp) {
+                        area = 0.5 * base * perp;
+                        speak(`Area is ${area.toFixed(2)} square units`, true);
+                    } else if (hyp && base) {
+                        perp = Math.sqrt(hyp ** 2 - base ** 2);
+                        area = 0.5 * base * perp;
+                        speak(`Area is ${area.toFixed(2)} square units`, true);
+                    } else if (hyp && perp) {
+                        base = Math.sqrt(hyp ** 2 - perp ** 2);
+                        area = 0.5 * base * perp;
+                        speak(`Area is ${area.toFixed(2)} square units`, true);
+                    } else {
+                        speak("Not enough data to compute area.");
+                    }
+                }
+                else if (demand.includes("base")) {
+                    if (area && perp) {
+                        base = (area * 2) / perp;
+                        speak(`Base is ${base.toFixed(2)}`, true);
+                    } else if (hyp && perp) {
+                        base = Math.sqrt(hyp ** 2 - perp ** 2);
+                        speak(`Base is ${base.toFixed(2)}`, true);
+                    } else {
+                        speak("Not enough data to compute base.");
+                    }
+                }
+                else if (demand.includes("perpendicular")) {
+                    if (area && base) {
+                        perp = (area * 2) / base;
+                        speak(`Perpendicular is ${perp.toFixed(2)}`, true);
+                    } else if (hyp && base) {
+                        perp = Math.sqrt(hyp ** 2 - base ** 2);
+                        speak(`Perpendicular is ${perp.toFixed(2)}`, true);
+                    } else {
+                        speak("Not enough data to compute perpendicular.");
+                    }
+                }
+                else if (demand.includes("hypotenuse")) {
+                    if (base && perp) {
+                        hyp = Math.sqrt(base ** 2 + perp ** 2);
+                        speak(`Hypotenuse is ${hyp.toFixed(2)}`, true);
+                    } else {
+                        speak("Not enough data to compute hypotenuse.");
+                    }
+                }
+                else {
+                    speak("Invalid input. Restart program.");
+                }
+
+                status.textContent = 'Calculation complete';
+                afterCalculation();
+            }
+        }
+        
+        function processMode5(input) {
+            if (step === 0) {
+                data.term1 = input.toLowerCase();
+                speak(`Enter value of ${data.term1} (>0)`);
+                inputContainer.style.display = 'block';
+                userInput.placeholder = `Enter value of ${data.term1}`;
+                userInput.focus();
+                step = 1;
+            } else if (step === 1) {
+                if (!isValidNumber(input)) {
+                    showInputError("Invalid number. Please enter a valid value (>0).");
+                    inputContainer.style.display = 'block';
+                    userInput.focus();
+                    return;
+                }
+                data.value1 = parseFloat(input);
+                speak("Enter second term (base, perpendicular, hypotenuse, or perimeter)");
+                inputContainer.style.display = 'block';
+                userInput.placeholder = "Enter second term";
+                userInput.focus();
+                step = 2;
+            } else if (step === 2) {
+                data.term2 = input.toLowerCase();
+                speak(`Enter value of ${data.term2} (>0)`);
+                inputContainer.style.display = 'block';
+                userInput.placeholder = `Enter value of ${data.term2}`;
+                userInput.focus();
+                step = 3;
+            } else if (step === 3) {
+                if (!isValidNumber(input)) {
+                    showInputError("Invalid number. Please enter a valid value (>0).");
+                    inputContainer.style.display = 'block';
+                    userInput.focus();
+                    return;
+                }
+                data.value2 = parseFloat(input);
+                speak("Enter what you want to find");
+                inputContainer.style.display = 'block';
+                userInput.placeholder = "Enter what you want to find";
+                userInput.focus();
+                step = 4;
+            } else if (step === 4) {
+                const demand = input.toLowerCase();
+
+                let b, p, h, P, area;
+
+                if (data.term1 === 'base') b = data.value1;
+                if (data.term1 === 'perpendicular') p = data.value1;
+                if (data.term1 === 'hypotenuse') h = data.value1;
+                if (data.term1 === 'perimeter') P = data.value1;
+
+                if (data.term2 === 'base') b = data.value2;
+                if (data.term2 === 'perpendicular') p = data.value2;
+                if (data.term2 === 'hypotenuse') h = data.value2;
+                if (data.term2 === 'perimeter') P = data.value2;
+
+                if (b && p) {
+                    h = Math.sqrt(b**2 + p**2);
+                    P = b + p + h;
+                    area = 0.5 * b * p;
+                }
+                else if (b && h) {
+                    p = Math.sqrt(h**2 - b**2);
+                    P = b + p + h;
+                    area = 0.5 * b * p;
+                }
+                else if (p && h) {
+                    b = Math.sqrt(h**2 - p**2);
+                    P = b + p + h;
+                    area = 0.5 * b * p;
+                }
+                else if (b && P) {
+                    // Numerical solution for p and h
+                    let solved = false;
+                    for (let guess=0; guess<=P; guess+=0.01) {
+                        let hguess = P - b - guess;
+                        if (hguess <= 0) continue;
+                        if (Math.abs((b*b + guess*guess) - (hguess*hguess)) < 1e-2) {
+                            p = guess; h = hguess; P = b + p + h; area = 0.5 * b * p; solved = true; break;
+                        }
+                    }
+                    if (!solved) speak("Could not solve for perpendicular with given base and perimeter numerically.");
+                }
+                else if (p && P) {
+                    let solved = false;
+                    for (let guess=0; guess<=P; guess+=0.01) {
+                        let hguess = P - p - guess;
+                        if (hguess <= 0) continue;
+                        if (Math.abs((guess*guess + p*p) - (hguess*hguess)) < 1e-2) {
+                            b = guess; h = hguess; P = b + p + h; area = 0.5 * b * p; solved = true; break;
+                        }
+                    }
+                    if (!solved) speak("Could not solve for base with given perpendicular and perimeter numerically.");
+                }
+                else if (h && P) {
+                    let sumBP = P - h;
+                    let solved = false;
+                    for (let guess=0; guess<=sumBP; guess+=0.01) {
+                        let guessP = sumBP - guess;
+                        if (guessP <= 0) continue;
+                        if (Math.abs((guess*guess + guessP*guessP) - h*h) < 1e-2) {
+                            b = guess; p = guessP; area = 0.5 * b * p; solved = true; break;
+                        }
+                    }
+                    if (!solved) speak("Could not solve for base and perpendicular with given hypotenuse and perimeter numerically.");
+                }
+
+                if (demand.includes('base') && b !== undefined) speak(`Base is ${b.toFixed(2)}`, true);
+                if (demand.includes('perpendicular') && p !== undefined) speak(`Perpendicular is ${p.toFixed(2)}`, true);
+                if (demand.includes('hypotenuse') && h !== undefined) speak(`Hypotenuse is ${h.toFixed(2)}`, true);
+                if (demand.includes('perimeter') && P !== undefined) speak(`Perimeter is ${P.toFixed(2)}`, true);
+                if (demand.includes('area') && area !== undefined) speak(`Area is ${area.toFixed(2)} square units`, true);
+
+                status.textContent = 'Calculation complete';
+                afterCalculation();
+            }
+        }
+        
+        function processMode6(input) {
+            if (step === 0) {
+                if (!isValidNumber(input)) {
+                    showInputError("Invalid number. Please enter a valid base (>0).");
+                    inputContainer.style.display = 'block';
+                    userInput.focus();
+                    return;
+                }
+                data.base = parseFloat(input);
+                speak("Enter perpendicular (>0)");
+                inputContainer.style.display = 'block';
+                userInput.placeholder = "Enter perpendicular";
+                userInput.focus();
+                step = 1;
+            } else if (step === 1) {
+                if (!isValidNumber(input)) {
+                    showInputError("Invalid number. Please enter a valid perpendicular (>0).");
+                    inputContainer.style.display = 'block';
+                    userInput.focus();
+                    return;
+                }
+                data.perpendicular = parseFloat(input);
+                speak("Enter hypotenuse (>0)");
+                inputContainer.style.display = 'block';
+                userInput.placeholder = "Enter hypotenuse";
+                userInput.focus();
+                step = 2;
+            } else if (step === 2) {
+                if (!isValidNumber(input)) {
+                    showInputError("Invalid number. Please enter a valid hypotenuse (>0).");
+                    inputContainer.style.display = 'block';
+                    userInput.focus();
+                    return;
+                }
+                data.hypotenuse = parseFloat(input);
+
+                // Triangle validity check
+                if (data.base + data.perpendicular <= data.hypotenuse || data.base + data.hypotenuse <= data.perpendicular || data.perpendicular + data.hypotenuse <= data.base) {
+                    speak("Invalid triangle sides. Please check the values.");
+                    status.textContent = 'Invalid triangle';
+                    afterCalculation();
+                    return;
+                }
+                
+                const angleRad = Math.atan(data.perpendicular / data.base);
+                const angleDeg = angleRad * (180 / Math.PI);
+                const sinVal = data.perpendicular / data.hypotenuse;
+                const cosVal = data.base / data.hypotenuse;
+                const tanVal = data.perpendicular / data.base;
+                const cosecVal = 1 / sinVal;
+                const secVal = 1 / cosVal;
+                const cotVal = 1 / tanVal;
+                
+                speak(`Hypotenuse is ${data.hypotenuse.toFixed(2)}`, true);
+                speak(`Angle θ between base and hypotenuse is ${angleDeg.toFixed(2)} degrees`, true);
+                speak(`sin θ is ${sinVal.toFixed(2)}`, true);
+                speak(`cos θ is ${cosVal.toFixed(2)}`, true);
+                speak(`tan θ is ${tanVal.toFixed(2)}`, true);
+                speak(`cosec θ is ${cosecVal.toFixed(2)}`, true);
+                speak(`sec θ is ${secVal.toFixed(2)}`, true);
+                speak(`cot θ is ${cotVal.toFixed(2)}`, true);
+                
+                status.textContent = 'Calculation complete';
+                afterCalculation();
+            }
+        }
+        
+        function showTheory() {
+            speak("Definition of Triangle:");
+            speak("A triangle is a polygon with three sides and three angles. The sum of the interior angles in any triangle is always 180°.");
+            speak("\nThree Types of Triangles:");
+            speak("By Sides:");
+            speak("- Equilateral – all sides and angles are equal (each angle = 60°)");
+            speak("- Isosceles – two sides and two angles are equal");
+            speak("- Scalene – all sides and angles are different");
+            speak("\nBy Angles:");
+            speak("- Acute – all angles < 90°");
+            speak("- Right – one angle = 90°");
+            speak("- Obtuse – one angle > 90°");
+            speak("\n\nBasic Theories:");
+            speak("- Angle Sum Property: ∠A+∠B+∠C=180°");
+            speak("- Pythagoras Theorem (Right triangle): b² + p² = h²");
+            speak("- Triangle Inequality Theorem: The sum of any two sides must be greater than the third side.");
+            speak("- Area Theorems: For base b, height h: Area = (b * h)/2");
+            speak("- Heron's Formula: s = (a+b+c)/2, Area = √[s(s-a)(s-b)(s-c)]");
+            speak("\n\nTrigonometric Ratios (Right Triangle):");
+            speak("- sinθ = Perpendicular/Hypotenuse");
+            speak("- cosθ = Base/Hypotenuse");
+            speak("- tanθ = Perpendicular/Base");
+            speak("- cosecθ = 1/sinθ = Hypotenuse/Perpendicular");
+            speak("- secθ = 1/cosθ = Hypotenuse/Base");
+            speak("- cotθ = 1/tanθ = Base/Perpendicular");
+            status.textContent = 'Theory displayed';
+        }
+
+        // ---- Quiz System ----
+        const quizQuestions = [
+            // A - 25
+            {
+                q: "What is the sum of the interior angles of a triangle?",
+                opts: ["180°", "360°", "90°", "270°"],
+                ans: 0,
+                explain: "Sum of interior angles in any triangle is 180°."
+            },
+            {
+                q: "Which triangle has all sides equal?",
+                opts: ["Equilateral", "Isosceles", "Scalene", "Right"],
+                ans: 0,
+                explain: "Equilateral triangle has all sides equal."
+            },
+            {
+                q: "A triangle with two equal sides is called?",
+                opts: ["Isosceles", "Equilateral", "Scalene", "Obtuse"],
+                ans: 0,
+                explain: "Isosceles triangle has two equal sides."
+            },
+            {
+                q: "What is Heron's formula for the area of a triangle?",
+                opts: [
+                    "Area = sqrt[s(s-a)(s-b)(s-c)]",
+                    "Area = (a × b × c) / 2",
+                    "Area = base × height",
+                    "Area = (a + b + c) / 2"
+                ],
+                ans: 0,
+                explain: "Heron's formula: Area = sqrt[s(s-a)(s-b)(s-c)]."
+            },
+            {
+                q: "The altitude of a triangle is also called its?",
+                opts: ["Height", "Median", "Angle bisector", "Perimeter"],
+                ans: 0,
+                explain: "Altitude is another word for height."
+            },
+            {
+                q: "Which triangle has exactly two equal angles?",
+                opts: ["Isosceles", "Equilateral", "Scalene", "Obtuse"],
+                ans: 0,
+                explain: "Isosceles triangle."
+            },
+            {
+                q: "tanθ = ?",
+                opts: ["sinθ/cosθ", "cosθ/sinθ", "1/sinθ", "1/cosθ"],
+                ans: 0,
+                explain: "tanθ = sinθ/cosθ."
+            },
+            {
+                q: "If a triangle is equilateral, what are each of its angles?",
+                opts: ["60°", "45°", "90°", "120°"],
+                ans: 0,
+                explain: "Each angle = 180°/3 = 60°."
+            },
+            {
+                q: "What is the formula for the perimeter of a triangle?",
+                opts: ["a + b + c", "a × b × c", "(a + b + c)/2", "a + b - c"],
+                ans: 0,
+                explain: "Perimeter is sum of all sides: a + b + c."
+            },
+            {
+                q: "Which of the following is NOT a triangle inequality?",
+                opts: [
+                    "a + b = c",
+                    "a + b > c",
+                    "a + c > b",
+                    "b + c > a"
+                ],
+                ans: 0,
+                explain: "a + b = c is not allowed; must be greater."
+            },
+            {
+                q: "Which triangle cannot exist?",
+                opts: [
+                    "Sides 2, 2, 5",
+                    "Sides 5, 5, 5",
+                    "Sides 4, 5, 6",
+                    "Sides 3, 4, 5"
+                ],
+                ans: 0,
+                explain: "Sum of two sides must be > third. 2+2=4 is not > 5."
+            },
+            {
+                q: "If area = 24 and base = 8, what is height?",
+                opts: ["6", "3", "4", "8"],
+                ans: 0,
+                explain: "Area = 1/2 × base × height ⇒ 24 = 4 × height ⇒ height = 6."
+            },
+            {
+                q: "Which triangle has one angle equal to 90°?",
+                opts: ["Right", "Equilateral", "Obtuse", "Scalene"],
+                ans: 0,
+                explain: "Right triangle has one 90° angle."
+            },
+            {
+                q: "A triangle with all angles less than 90° is called?",
+                opts: ["Acute", "Equilateral", "Obtuse", "Right"],
+                ans: 0,
+                explain: "Acute triangle."
+            },
+            {
+                q: "Which triangle has all angles different?",
+                opts: ["Scalene", "Equilateral", "Isosceles", "Right"],
+                ans: 0,
+                explain: "Scalene triangle."
+            },
+            {
+                q: "Area of an equilateral triangle with side a is?",
+                opts: [
+                    "√3/4 × a²",
+                    "a²",
+                    "1/2 × a²",
+                    "1/4 × a²"
+                ],
+                ans: 0,
+                explain: "Area = √3/4 × a²."
+            },
+            {
+                q: "Which triangle has only one axis of symmetry?",
+                opts: ["Isosceles", "Equilateral", "Scalene", "Obtuse"],
+                ans: 0,
+                explain: "Isosceles triangle."
+            },
+            {
+                q: "What is the value of sin(90°)?",
+                opts: ["1", "0.5", "0", "-1"],
+                ans: 0,
+                explain: "sin(90°) = 1."
+            },
+            {
+                q: "What is the formula for sinθ?",
+                opts: ["Perpendicular / Hypotenuse", "Base / Hypotenuse", "Hypotenuse / Perpendicular", "Base / Perpendicular"],
+                ans: 0,
+                explain: "sinθ = Perpendicular / Hypotenuse."
+            },
+            {
+                q: "What is the value of tan(45°)?",
+                opts: ["1", "0", "√3", "0.5"],
+                ans: 0,
+                explain: "tan(45°) = 1."
+            },
+            {
+                q: "Which triangle has three axes of symmetry?",
+                opts: ["Equilateral", "Isosceles", "Scalene", "Right"],
+                ans: 0,
+                explain: "Equilateral triangle."
+            },
+            {
+                q: "What is the formula for secθ?",
+                opts: ["1/cosθ", "1/sinθ", "cosθ/sinθ", "sinθ/cosθ"],
+                ans: 0,
+                explain: "secθ = 1/cosθ."
+            },
+            {
+                q: "Which triangle has all sides different?",
+                opts: ["Scalene", "Equilateral", "Isosceles", "Right"],
+                ans: 0,
+                explain: "Scalene triangle: all sides different."
+            },
+            {
+                q: "What is the sum of exterior angles of any triangle?",
+                opts: ["360°", "180°", "90°", "270°"],
+                ans: 0,
+                explain: "Sum of exterior angles in any polygon is 360°."
+            },
+            {
+                q: "Which trigonometric ratio equals hypotenuse/base?",
+                opts: ["secθ", "cosecθ", "cotθ", "tanθ"],
+                ans: 0,
+                explain: "secθ = hypotenuse/base."
+            },
+
+            // B - 25
+            {
+                q: "Which triangle has two equal sides and two equal angles?",
+                opts: ["Equilateral", "Isosceles", "Scalene", "Obtuse"],
+                ans: 1,
+                explain: "Isosceles triangle."
+            },
+            {
+                q: "What is the value of cos(0°)?",
+                opts: ["0", "1", "-1", "0.5"],
+                ans: 1,
+                explain: "cos(0°) = 1."
+            },
+            {
+                q: "What is the value of sin(30°)?",
+                opts: ["0", "0.5", "1", "1.5"],
+                ans: 1,
+                explain: "sin(30°) = 0.5."
+            },
+            {
+                q: "If cosθ = 0.5, θ is?",
+                opts: ["60°", "30°", "45°", "90°"],
+                ans: 0,
+                explain: "cos(60°) = 0.5."
+            },
+            {
+                q: "If a triangle has angles 50°, 60°, what is the missing angle?",
+                opts: ["70°", "80°", "90°", "100°"],
+                ans: 0,
+                explain: "180 - (50 + 60) = 70°."
+            },
+            {
+                q: "If base = 12, height = 7, what is the area?",
+                opts: ["42", "84", "21", "49"],
+                ans: 0,
+                explain: "Area = 1/2 × 12 × 7 = 42."
+            },
+            {
+                q: "If a triangle has sides 8, 15, and 17, what is its type?",
+                opts: ["Equilateral", "Isosceles", "Right", "Scalene"],
+                ans: 2,
+                explain: "8² + 15² = 64 + 225 = 289 = 17²; right triangle."
+            },
+            {
+                q: "Heron's Formula: For sides a=3, b=4, c=5; what is s?",
+                opts: ["6", "5", "7", "12"],
+                ans: 0,
+                explain: "s = (3+4+5)/2 = 6."
+            },
+            {
+                q: "If a triangle has angles 110°, 40°, and x°, what is x?",
+                opts: ["30°", "20°", "10°", "40°"],
+                ans: 1,
+                explain: "x = 180° - (110° + 40°) = 30°."
+            },
+            {
+                q: "What is the value of tan(0°)?",
+                opts: ["0", "1", "-1", "Undefined"],
+                ans: 0,
+                explain: "tan(0°) = 0."
+            },
+            {
+                q: "If a triangle has sides 2, 2, and 3, what type is it?",
+                opts: ["Equilateral", "Isosceles", "Scalene", "Right"],
+                ans: 1,
+                explain: "Two equal sides: isosceles."
+            },
+            {
+                q: "Which trigonometric ratio equals base/perpendicular?",
+                opts: ["tanθ", "cotθ", "secθ", "cosecθ"],
+                ans: 1,
+                explain: "cotθ = base/perpendicular."
+            },
+            {
+                q: "What is the value of cot(45°)?",
+                opts: ["0", "1", "-1", "Undefined"],
+                ans: 1,
+                explain: "cot(45°) = 1."
+            },
+            {
+                q: "What is the value of sin(45°)?",
+                opts: ["1/2", "√2/2", "1", "0"],
+                ans: 1,
+                explain: "sin(45°) = √2/2."
+            },
+            {
+                q: "What is the value of cos(45°)?",
+                opts: ["1/2", "√2/2", "1", "0"],
+                ans: 1,
+                explain: "cos(45°) = √2/2."
+            },
+            {
+                q: "Which triangle can have sides 2, 4, and 7?",
+                opts: ["Equilateral", "Scalene", "Isosceles", "Impossible"],
+                ans: 1,
+                explain: "All sides are different and the triangle inequality holds, so it's scalene."
+            },
+            {
+                q: "If a triangle has sides 7, 24, and 25, is it a right triangle?",
+                opts: ["Yes", "No", "Only if angles are equal", "Cannot be determined"],
+                ans: 0,
+                explain: "7² + 24² = 49 + 576 = 625; 25² = 625. So, it's a right triangle."
+            },
+            {
+                q: "If area = 18 and base = 6, height is?",
+                opts: ["3", "6", "9", "12"],
+                ans: 1,
+                explain: "Area = 1/2 × base × height ⇒ 18 = 3 × height ⇒ height = 6."
+            },
+            {
+                q: "What is the value of sin(60°)?",
+                opts: ["1", "0.5", "√3/2", "1.5"],
+                ans: 2,
+                explain: "sin(60°) = √3/2."
+            },
+            {
+                q: "What is the value of cos(60°)?",
+                opts: ["1/2", "√3/2", "1", "0"],
+                ans: 0,
+                explain: "cos(60°) = 0.5."
+            },
+            {
+                q: "What is the value of tan(60°)?",
+                opts: ["1", "√3", "0.5", "2"],
+                ans: 1,
+                explain: "tan(60°) = √3."
+            },
+            {
+                q: "A triangle with sides 4, 5, and 8. Is it possible?",
+                opts: ["Yes", "No", "Only if it is obtuse", "Only if it is right"],
+                ans: 0,
+                explain: "Sum of any two sides > third side; 4+5=9 > 8."
+            },
+            {
+                q: "If a triangle has three angles: 50°, 60°, and x°, what is x?",
+                opts: ["70°", "80°", "90°", "100°"],
+                ans: 0,
+                explain: "x = 180° - (50° + 60°) = 70°."
+            },
+            {
+                q: "If a triangle has angles 70°, 50°, what is the third angle?",
+                opts: ["60°", "70°", "50°", "80°"],
+                ans: 0,
+                explain: "180° - (70° + 50°) = 60°."
+            },
+            {
+                q: "If a triangle has angles 80°, 40°, and x°, what is x?",
+                opts: ["60°", "80°", "40°", "100°"],
+                ans: 0,
+                explain: "x = 180° - (80° + 40°) = 60°."
+            },
+
+            // C - 25
+            {
+                q: "A triangle whose all sides are unequal is?",
+                opts: ["Equilateral", "Isosceles", "Scalene", "Right"],
+                ans: 2,
+                explain: "Scalene triangle."
+            },
+            {
+                q: "What is the value of tan(90°)?",
+                opts: ["0", "1", "Undefined", "Infinite"],
+                ans: 2,
+                explain: "tan(90°) is undefined."
+            },
+            {
+                q: "If a triangle has sides 6, 8, and 10, what is its area?",
+                opts: ["24", "20", "16", "30"],
+                ans: 0,
+                explain: "Area = 1/2 × 6 × 8 = 24."
+            },
+            {
+                q: "Which triangle has the smallest altitude for a given base?",
+                opts: ["Equilateral", "Right", "Obtuse", "Acute"],
+                ans: 2,
+                explain: "Obtuse triangle."
+            },
+            {
+                q: "What is the formula for cotangent?",
+                opts: ["1/tanθ", "sinθ/cosθ", "cosθ/sinθ", "tanθ/sinθ"],
+                ans: 0,
+                explain: "cotθ = 1/tanθ."
+            },
+            {
+                q: "If a triangle has one angle = 120°, what is its type?",
+                opts: ["Acute", "Right", "Obtuse", "Equilateral"],
+                ans: 2,
+                explain: "Angle > 90°: obtuse triangle."
+            },
+            {
+                q: "What is the formula for the area of a triangle in terms of two sides and the included angle?",
+                opts: [
+                    "½ab sinC",
+                    "ab/cosC",
+                    "ab tanC",
+                    "ab/cotC"
+                ],
+                ans: 0,
+                explain: "Area = ½ × a × b × sinC."
+            },
+            {
+                q: "If a triangle has sides 8, 8, and 8, what is its area?",
+                opts: ["16√3", "8√3", "12√3", "4√3"],
+                ans: 1,
+                explain: "Area = (√3/4) × 8² = 16√3."
+            },
+            {
+                q: "Which triangle has the maximum area for a given perimeter?",
+                opts: ["Equilateral", "Isosceles", "Scalene", "Right"],
+                ans: 0,
+                explain: "Equilateral triangle."
+            },
+            {
+                q: "If a triangle has sides 9, 12, and 15, what is its area?",
+                opts: ["54", "36", "72", "45"],
+                ans: 0,
+                explain: "Area = 1/2 × 9 × 12 = 54."
+            },
+            {
+                q: "Which triangle has the longest altitude for a given base?",
+                opts: ["Equilateral", "Scalene", "Acute", "Obtuse"],
+                ans: 2,
+                explain: "In an acute triangle, altitude is longest for a given base."
+            },
+            {
+                q: "What is the value of cosec(90°)?",
+                opts: ["1", "0", "-1", "Undefined"],
+                ans: 0,
+                explain: "cosec(90°) = 1."
+            },
+            {
+                q: "What is the formula for the inradius (r) of a triangle?",
+                opts: [
+                    "Area / s",
+                    "Area / 2s",
+                    "Area / a",
+                    "Area / b"
+                ],
+                ans: 0,
+                explain: "r = Area / s, s = semi-perimeter."
+            },
+            {
+                q: "What is the value of sin(0°)?",
+                opts: ["0", "1", "-1", "0.5"],
+                ans: 0,
+                explain: "sin(0°) = 0."
+            },
+            {
+                q: "Which triangle cannot have all angles equal?",
+                opts: ["Equilateral", "Isosceles", "Scalene", "Right"],
+                ans: 2,
+                explain: "Scalene triangle: all angles are different."
+            },
+            {
+                q: "If a triangle has sides 3, 4, and 6, what is its area?",
+                opts: ["5.33", "6", "7.21", "4.45"],
+                ans: 0,
+                explain: "Use Heron's formula: s = (3+4+6)/2 = 6.5; area = √[6.5 × 3.5 × 2.5 × 0.5] ≈ 5.33."
+            },
+            {
+                q: "If a triangle has sides 13, 14, and 15, what is its area?",
+                opts: ["84", "60", "90", "120"],
+                ans: 0,
+                explain: "Use Heron's formula: s = (13+14+15)/2 = 21; area ≈ 84."
+            },
+            {
+                q: "What is the formula for the circumradius (R) for triangle ABC?",
+                opts: [
+                    "abc / 4Area",
+                    "abc / 2Area",
+                    "abc / Area",
+                    "abc / 8Area"
+                ],
+                ans: 0,
+                explain: "R = abc / 4Area."
+            },
+            {
+                q: "If a triangle has sides 9, 40, and 41, what is its area?",
+                opts: ["180", "160", "120", "200"],
+                ans: 0,
+                explain: "Area = 1/2 × 9 × 40 = 180."
+            },
+            {
+                q: "Which triangle has the smallest area for a given perimeter?",
+                opts: ["Equilateral", "Scalene", "Obtuse", "Right"],
+                ans: 2,
+                explain: "Obtuse triangle."
+            },
+            {
+                q: "What is the value of cos(30°)?",
+                opts: ["0.5", "√3/2", "1", "0"],
+                ans: 1,
+                explain: "cos(30°) = √3/2."
+            },
+            {
+                q: "Which triangle can have all angles less than 60°?",
+                opts: ["Equilateral", "Scalene", "Acute", "Impossible"],
+                ans: 3,
+                explain: "Sum of angles is 180°, so can't have all angles < 60°."
+            },
+            {
+                q: "If a triangle has sides 7, 10, and 13, what is its area?",
+                opts: ["35", "32.5", "40", "45"],
+                ans: 1,
+                explain: "Use Heron's formula: s = (7+10+13)/2 = 15; area ≈ 32.5."
+            },
+            {
+                q: "If area = 36 and base = 9, height is?",
+                opts: ["4", "6", "8", "9"],
+                ans: 1,
+                explain: "Area = 1/2 × base × height ⇒ 36 = 4.5 × height ⇒ height = 8."
+            },
+            {
+                q: "If a triangle has angles 30°, 60°, and 90°, what is its type?",
+                opts: ["Acute", "Obtuse", "Right", "Equilateral"],
+                ans: 2,
+                explain: "One angle is 90°: right triangle."
+            },
+
+            // D - 25
+            {
+                q: "If two angles of a triangle are 30° and 60°, what is the third angle?",
+                opts: ["60°", "90°", "120°", "30°"],
+                ans: 1,
+                explain: "180° - (30° + 60°) = 90°."
+            },
+            {
+                q: "What is the value of sec(60°)?",
+                opts: ["2", "0.5", "1", "2/√3"],
+                ans: 3,
+                explain: "sec(60°) = 2/√3 in exact form."
+            },
+            {
+                q: "If a triangle has sides 7, 8, and 9, what is its perimeter?",
+                opts: ["24", "21", "18", "19"],
+                ans: 0,
+                explain: "Perimeter = 7 + 8 + 9 = 24."
+            },
+            {
+                q: "Which triangle has only acute angles?",
+                opts: ["Equilateral", "Scalene", "Acute", "Isosceles"],
+                ans: 2,
+                explain: "Acute triangle."
+            },
+            {
+                q: "If a triangle has sides 5, 5, and 8, what is its perimeter?",
+                opts: ["10", "15", "18", "13"],
+                ans: 2,
+                explain: "Perimeter = 5 + 5 + 8 = 18."
+            },
+            {
+                q: "If a triangle has sides 3, 4, and 5, what is its perimeter?",
+                opts: ["9", "11", "12", "10"],
+                ans: 2,
+                explain: "Perimeter = 3 + 4 + 5 = 12."
+            },
+            {
+                q: "A triangle has sides 4, 5, and 8. Is it possible?",
+                opts: ["Yes", "No", "Only if it is obtuse", "Only if it is right"],
+                ans: 0,
+                explain: "Sum of any two sides > third side; 4+5=9 > 8."
+            },
+            {
+                q: "If a triangle has sides 2, 3, and 5, can it exist?",
+                opts: ["Yes", "No", "Only if angles are acute", "Only if area is zero"],
+                ans: 1,
+                explain: "2+3=5 is not greater than 5; so it cannot exist."
+            },
+            {
+                q: "What is the median from the vertex of a triangle?",
+                opts: ["Two equal areas", "Two equal sides", "Three equal angles", "Three equal sides"],
+                ans: 0,
+                explain: "Median divides triangle into two equal areas."
+            },
+            {
+                q: "If base = 5 and height = 12, area is?",
+                opts: ["30", "60", "25", "15"],
+                ans: 0,
+                explain: "Area = 1/2 × 5 × 12 = 30."
+            },
+            {
+                q: "If base = 8 and area = 24, what is height?",
+                opts: ["3", "6", "4", "8"],
+                ans: 1,
+                explain: "Area = 1/2 × base × height ⇒ 24 = 4 × height ⇒ height = 6."
+            },
+            {
+                q: "What is the largest side of a right triangle called?",
+                opts: ["Base", "Perpendicular", "Hypotenuse", "Median"],
+                ans: 2,
+                explain: "Hypotenuse is the longest side in right triangle."
+            },
+            {
+                q: "If a triangle has sides 5, 12, and 13, what is its area?",
+                opts: ["30", "24", "32", "20"],
+                ans: 0,
+                explain: "Area = 1/2 × 5 × 12 = 30."
+            },
+            {
+                q: "If a triangle has sides 6, 8, and 10, what is its area?",
+                opts: ["24", "20", "16", "30"],
+                ans: 0,
+                explain: "Area = 1/2 × 6 × 8 = 24."
+            },
+            {
+                q: "What is the value of sin(30°)?",
+                opts: ["0.5", "√3/2", "1", "0"],
+                ans: 0,
+                explain: "sin(30°) = 0.5."
+            },
+            {
+                q: "Which triangle has the maximum area for a given perimeter?",
+                opts: ["Equilateral", "Isosceles", "Scalene", "Right"],
+                ans: 0,
+                explain: "Equilateral triangle."
+            },
+            {
+                q: "Which triangle has all angles equal?",
+                opts: ["Equilateral", "Isosceles", "Scalene", "Right"],
+                ans: 0,
+                explain: "Equilateral triangle: all angles equal."
+            },
+            {
+                q: "What is the value of cos(90°)?",
+                opts: ["0", "1", "-1", "0.5"],
+                ans: 0,
+                explain: "cos(90°) = 0."
+            },
+            {
+                q: "If a triangle has sides 2, 2, and 2, what is its type?",
+                opts: ["Equilateral", "Isosceles", "Scalene", "Obtuse"],
+                ans: 0,
+                explain: "All sides equal: equilateral."
+            },
+            {
+                q: "A triangle with all angles less than 90° is called?",
+                opts: ["Acute", "Equilateral", "Obtuse", "Right"],
+                ans: 0,
+                explain: "Acute triangle."
+            },
+            {
+                q: "Which triangle has three axes of symmetry?",
+                opts: ["Equilateral", "Isosceles", "Scalene", "Right"],
+                ans: 0,
+                explain: "Equilateral triangle."
+            },
+            {
+                q: "What is the sum of the interior angles of a triangle?",
+                opts: ["180°", "360°", "90°", "270°"],
+                ans: 0,
+                explain: "Sum of interior angles in any triangle is 180°."
+            },
+            {
+                q: "If a triangle has sides 5, 12, and 13, what is its area?",
+                opts: ["30", "24", "32", "20"],
+                ans: 0,
+                explain: "Area = 1/2 × 5 × 12 = 30."
+            },
+            {
+                q: "Which triangle has all sides equal?",
+                opts: ["Equilateral", "Isosceles", "Scalene", "Right"],
+                ans: 0,
+                explain: "Equilateral triangle has all sides equal."
+            },
+                // A - 25
+            {
+                q: "What is the sum of the interior angles of a triangle?",
+                opts: ["180°", "360°", "90°", "270°"],
+                ans: 0,
+                explain: "Sum of interior angles in any triangle is 180°."
+            },
+            {
+                q: "Which triangle has all sides equal?",
+                opts: ["Equilateral", "Isosceles", "Scalene", "Right"],
+                ans: 0,
+                explain: "Equilateral triangle has all sides equal."
+            },
+            {
+                q: "A triangle with two equal sides is called?",
+                opts: ["Isosceles", "Equilateral", "Scalene", "Obtuse"],
+                ans: 0,
+                explain: "Isosceles triangle has two equal sides."
+            },
+            {
+                q: "What is Heron's formula for the area of a triangle?",
+                opts: [
+                    "Area = sqrt[s(s-a)(s-b)(s-c)]",
+                    "Area = (a × b × c) / 2",
+                    "Area = base × height",
+                    "Area = (a + b + c) / 2"
+                ],
+                ans: 0,
+                explain: "Heron's formula: Area = sqrt[s(s-a)(s-b)(s-c)]."
+            },
+            {
+                q: "The altitude of a triangle is also called its?",
+                opts: ["Height", "Median", "Angle bisector", "Perimeter"],
+                ans: 0,
+                explain: "Altitude is another word for height."
+            },
+            {
+                q: "Which triangle has exactly two equal angles?",
+                opts: ["Isosceles", "Equilateral", "Scalene", "Obtuse"],
+                ans: 0,
+                explain: "Isosceles triangle."
+            },
+            {
+                q: "tanθ = ?",
+                opts: ["sinθ/cosθ", "cosθ/sinθ", "1/sinθ", "1/cosθ"],
+                ans: 0,
+                explain: "tanθ = sinθ/cosθ."
+            },
+            {
+                q: "If a triangle is equilateral, what are each of its angles?",
+                opts: ["60°", "45°", "90°", "120°"],
+                ans: 0,
+                explain: "Each angle = 180°/3 = 60°."
+            },
+            {
+                q: "What is the formula for the perimeter of a triangle?",
+                opts: ["a + b + c", "a × b × c", "(a + b + c)/2", "a + b - c"],
+                ans: 0,
+                explain: "Perimeter is sum of all sides: a + b + c."
+            },
+            {
+                q: "Which of the following is NOT a triangle inequality?",
+                opts: [
+                    "a + b = c",
+                    "a + b > c",
+                    "a + c > b",
+                    "b + c > a"
+                ],
+                ans: 0,
+                explain: "a + b = c is not allowed; must be greater."
+            },
+            {
+                q: "Which triangle cannot exist?",
+                opts: [
+                    "Sides 2, 2, 5",
+                    "Sides 5, 5, 5",
+                    "Sides 4, 5, 6",
+                    "Sides 3, 4, 5"
+                ],
+                ans: 0,
+                explain: "Sum of two sides must be > third. 2+2=4 is not > 5."
+            },
+            {
+                q: "If area = 24 and base = 8, what is height?",
+                opts: ["6", "3", "4", "8"],
+                ans: 0,
+                explain: "Area = 1/2 × base × height ⇒ 24 = 4 × height ⇒ height = 6."
+            },
+            {
+                q: "Which triangle has one angle equal to 90°?",
+                opts: ["Right", "Equilateral", "Obtuse", "Scalene"],
+                ans: 0,
+                explain: "Right triangle has one 90° angle."
+            },
+            {
+                q: "A triangle with all angles less than 90° is called?",
+                opts: ["Acute", "Equilateral", "Obtuse", "Right"],
+                ans: 0,
+                explain: "Acute triangle."
+            },
+            {
+                q: "Which triangle has all angles different?",
+                opts: ["Scalene", "Equilateral", "Isosceles", "Right"],
+                ans: 0,
+                explain: "Scalene triangle."
+            },
+            {
+                q: "Area of an equilateral triangle with side a is?",
+                opts: [
+                    "√3/4 × a²",
+                    "a²",
+                    "1/2 × a²",
+                    "1/4 × a²"
+                ],
+                ans: 0,
+                explain: "Area = √3/4 × a²."
+            },
+            {
+                q: "Which triangle has only one axis of symmetry?",
+                opts: ["Isosceles", "Equilateral", "Scalene", "Obtuse"],
+                ans: 0,
+                explain: "Isosceles triangle."
+            },
+            {
+                q: "What is the value of sin(90°)?",
+                opts: ["1", "0.5", "0", "-1"],
+                ans: 0,
+                explain: "sin(90°) = 1."
+            },
+            {
+                q: "What is the formula for sinθ?",
+                opts: ["Perpendicular / Hypotenuse", "Base / Hypotenuse", "Hypotenuse / Perpendicular", "Base / Perpendicular"],
+                ans: 0,
+                explain: "sinθ = Perpendicular / Hypotenuse."
+            },
+            {
+                q: "What is the value of tan(45°)?",
+                opts: ["1", "0", "√3", "0.5"],
+                ans: 0,
+                explain: "tan(45°) = 1."
+            },
+            {
+                q: "Which triangle has three axes of symmetry?",
+                opts: ["Equilateral", "Isosceles", "Scalene", "Right"],
+                ans: 0,
+                explain: "Equilateral triangle."
+            },
+            {
+                q: "What is the formula for secθ?",
+                opts: ["1/cosθ", "1/sinθ", "cosθ/sinθ", "sinθ/cosθ"],
+                ans: 0,
+                explain: "secθ = 1/cosθ."
+            },
+            {
+                q: "Which triangle has all sides different?",
+                opts: ["Scalene", "Equilateral", "Isosceles", "Right"],
+                ans: 0,
+                explain: "Scalene triangle: all sides different."
+            },
+            {
+                q: "What is the sum of exterior angles of any triangle?",
+                opts: ["360°", "180°", "90°", "270°"],
+                ans: 0,
+                explain: "Sum of exterior angles in any polygon is 360°."
+            },
+            {
+                q: "Which trigonometric ratio equals hypotenuse/base?",
+                opts: ["secθ", "cosecθ", "cotθ", "tanθ"],
+                ans: 0,
+                explain: "secθ = hypotenuse/base."
+            },
+
+            // B - 25
+            {
+                q: "Which triangle has two equal sides and two equal angles?",
+                opts: ["Equilateral", "Isosceles", "Scalene", "Obtuse"],
+                ans: 1,
+                explain: "Isosceles triangle."
+            },
+            {
+                q: "What is the value of cos(0°)?",
+                opts: ["0", "1", "-1", "0.5"],
+                ans: 1,
+                explain: "cos(0°) = 1."
+            },
+            {
+                q: "What is the value of sin(30°)?",
+                opts: ["0", "0.5", "1", "1.5"],
+                ans: 1,
+                explain: "sin(30°) = 0.5."
+            },
+            {
+                q: "If cosθ = 0.5, θ is?",
+                opts: ["60°", "30°", "45°", "90°"],
+                ans: 0,
+                explain: "cos(60°) = 0.5."
+            },
+            {
+                q: "If a triangle has angles 50°, 60°, what is the missing angle?",
+                opts: ["70°", "80°", "90°", "100°"],
+                ans: 0,
+                explain: "180 - (50 + 60) = 70°."
+            },
+            {
+                q: "If base = 12, height = 7, what is the area?",
+                opts: ["42", "84", "21", "49"],
+                ans: 0,
+                explain: "Area = 1/2 × 12 × 7 = 42."
+            },
+            {
+                q: "If a triangle has sides 8, 15, and 17, what is its type?",
+                opts: ["Equilateral", "Isosceles", "Right", "Scalene"],
+                ans: 2,
+                explain: "8² + 15² = 64 + 225 = 289 = 17²; right triangle."
+            },
+            {
+                q: "Heron's Formula: For sides a=3, b=4, c=5; what is s?",
+                opts: ["6", "5", "7", "12"],
+                ans: 0,
+                explain: "s = (3+4+5)/2 = 6."
+            },
+            {
+                q: "If a triangle has angles 110°, 40°, and x°, what is x?",
+                opts: ["30°", "20°", "10°", "40°"],
+                ans: 1,
+                explain: "x = 180° - (110° + 40°) = 30°."
+            },
+            {
+                q: "What is the value of tan(0°)?",
+                opts: ["0", "1", "-1", "Undefined"],
+                ans: 0,
+                explain: "tan(0°) = 0."
+            },
+            {
+                q: "If a triangle has sides 2, 2, and 3, what type is it?",
+                opts: ["Equilateral", "Isosceles", "Scalene", "Right"],
+                ans: 1,
+                explain: "Two equal sides: isosceles."
+            },
+            {
+                q: "Which trigonometric ratio equals base/perpendicular?",
+                opts: ["tanθ", "cotθ", "secθ", "cosecθ"],
+                ans: 1,
+                explain: "cotθ = base/perpendicular."
+            },
+            {
+                q: "What is the value of cot(45°)?",
+                opts: ["0", "1", "-1", "Undefined"],
+                ans: 1,
+                explain: "cot(45°) = 1."
+            },
+            {
+                q: "What is the value of sin(45°)?",
+                opts: ["1/2", "√2/2", "1", "0"],
+                ans: 1,
+                explain: "sin(45°) = √2/2."
+            },
+            {
+                q: "What is the value of cos(45°)?",
+                opts: ["1/2", "√2/2", "1", "0"],
+                ans: 1,
+                explain: "cos(45°) = √2/2."
+            },
+            {
+                q: "Which triangle can have sides 2, 4, and 7?",
+                opts: ["Equilateral", "Scalene", "Isosceles", "Impossible"],
+                ans: 1,
+                explain: "All sides are different and the triangle inequality holds, so it's scalene."
+            },
+            {
+                q: "If a triangle has sides 7, 24, and 25, is it a right triangle?",
+                opts: ["Yes", "No", "Only if angles are equal", "Cannot be determined"],
+                ans: 0,
+                explain: "7² + 24² = 49 + 576 = 625; 25² = 625. So, it's a right triangle."
+            },
+            {
+                q: "If area = 18 and base = 6, height is?",
+                opts: ["3", "6", "9", "12"],
+                ans: 1,
+                explain: "Area = 1/2 × base × height ⇒ 18 = 3 × height ⇒ height = 6."
+            },
+            {
+                q: "What is the value of sin(60°)?",
+                opts: ["1", "0.5", "√3/2", "1.5"],
+                ans: 2,
+                explain: "sin(60°) = √3/2."
+            },
+            {
+                q: "What is the value of cos(60°)?",
+                opts: ["1/2", "√3/2", "1", "0"],
+                ans: 0,
+                explain: "cos(60°) = 0.5."
+            },
+            {
+                q: "What is the value of tan(60°)?",
+                opts: ["1", "√3", "0.5", "2"],
+                ans: 1,
+                explain: "tan(60°) = √3."
+            },
+            {
+                q: "A triangle with sides 4, 5, and 8. Is it possible?",
+                opts: ["Yes", "No", "Only if it is obtuse", "Only if it is right"],
+                ans: 0,
+                explain: "Sum of any two sides > third side; 4+5=9 > 8."
+            },
+            {
+                q: "If a triangle has three angles: 50°, 60°, and x°, what is x?",
+                opts: ["70°", "80°", "90°", "100°"],
+                ans: 0,
+                explain: "x = 180° - (50° + 60°) = 70°."
+            },
+            {
+                q: "If a triangle has angles 70°, 50°, what is the third angle?",
+                opts: ["60°", "70°", "50°", "80°"],
+                ans: 0,
+                explain: "180° - (70° + 50°) = 60°."
+            },
+            {
+                q: "If a triangle has angles 80°, 40°, and x°, what is x?",
+                opts: ["60°", "80°", "40°", "100°"],
+                ans: 0,
+                explain: "x = 180° - (80° + 40°) = 60°."
+            },
+
+            // C - 25
+            {
+                q: "A triangle whose all sides are unequal is?",
+                opts: ["Equilateral", "Isosceles", "Scalene", "Right"],
+                ans: 2,
+                explain: "Scalene triangle."
+            },
+            {
+                q: "What is the value of tan(90°)?",
+                opts: ["0", "1", "Undefined", "Infinite"],
+                ans: 2,
+                explain: "tan(90°) is undefined."
+            },
+            {
+                q: "If a triangle has sides 6, 8, and 10, what is its area?",
+                opts: ["24", "20", "16", "30"],
+                ans: 0,
+                explain: "Area = 1/2 × 6 × 8 = 24."
+            },
+            {
+                q: "Which triangle has the smallest altitude for a given base?",
+                opts: ["Equilateral", "Right", "Obtuse", "Acute"],
+                ans: 2,
+                explain: "Obtuse triangle."
+            },
+            {
+                q: "What is the formula for cotangent?",
+                opts: ["1/tanθ", "sinθ/cosθ", "cosθ/sinθ", "tanθ/sinθ"],
+                ans: 0,
+                explain: "cotθ = 1/tanθ."
+            },
+            {
+                q: "If a triangle has one angle = 120°, what is its type?",
+                opts: ["Acute", "Right", "Obtuse", "Equilateral"],
+                ans: 2,
+                explain: "Angle > 90°: obtuse triangle."
+            },
+            {
+                q: "What is the formula for the area of a triangle in terms of two sides and the included angle?",
+                opts: [
+                    "½ab sinC",
+                    "ab/cosC",
+                    "ab tanC",
+                    "ab/cotC"
+                ],
+                ans: 0,
+                explain: "Area = ½ × a × b × sinC."
+            },
+            {
+                q: "If a triangle has sides 8, 8, and 8, what is its area?",
+                opts: ["16√3", "8√3", "12√3", "4√3"],
+                ans: 1,
+                explain: "Area = (√3/4) × 8² = 16√3."
+            },
+            {
+                q: "Which triangle has the maximum area for a given perimeter?",
+                opts: ["Equilateral", "Isosceles", "Scalene", "Right"],
+                ans: 0,
+                explain: "Equilateral triangle."
+            },
+            {
+                q: "If a triangle has sides 9, 12, and 15, what is its area?",
+                opts: ["54", "36", "72", "45"],
+                ans: 0,
+                explain: "Area = 1/2 × 9 × 12 = 54."
+            },
+            {
+                q: "Which triangle has the longest altitude for a given base?",
+                opts: ["Equilateral", "Scalene", "Acute", "Obtuse"],
+                ans: 2,
+                explain: "In an acute triangle, altitude is longest for a given base."
+            },
+            {
+                q: "What is the value of cosec(90°)?",
+                opts: ["1", "0", "-1", "Undefined"],
+                ans: 0,
+                explain: "cosec(90°) = 1."
+            },
+            {
+                q: "What is the formula for the inradius (r) of a triangle?",
+                opts: [
+                    "Area / s",
+                    "Area / 2s",
+                    "Area / a",
+                    "Area / b"
+                ],
+                ans: 0,
+                explain: "r = Area / s, s = semi-perimeter."
+            },
+            {
+                q: "What is the value of sin(0°)?",
+                opts: ["0", "1", "-1", "0.5"],
+                ans: 0,
+                explain: "sin(0°) = 0."
+            },
+            {
+                q: "Which triangle cannot have all angles equal?",
+                opts: ["Equilateral", "Isosceles", "Scalene", "Right"],
+                ans: 2,
+                explain: "Scalene triangle: all angles are different."
+            },
+            {
+                q: "If a triangle has sides 3, 4, and 6, what is its area?",
+                opts: ["5.33", "6", "7.21", "4.45"],
+                ans: 0,
+                explain: "Use Heron's formula: s = (3+4+6)/2 = 6.5; area = √[6.5 × 3.5 × 2.5 × 0.5] ≈ 5.33."
+            },
+            {
+                q: "If a triangle has sides 13, 14, and 15, what is its area?",
+                opts: ["84", "60", "90", "120"],
+                ans: 0,
+                explain: "Use Heron's formula: s = (13+14+15)/2 = 21; area ≈ 84."
+            },
+            {
+                q: "What is the formula for the circumradius (R) for triangle ABC?",
+                opts: [
+                    "abc / 4Area",
+                    "abc / 2Area",
+                    "abc / Area",
+                    "abc / 8Area"
+                ],
+                ans: 0,
+                explain: "R = abc / 4Area."
+            },
+            {
+                q: "If a triangle has sides 9, 40, and 41, what is its area?",
+                opts: ["180", "160", "120", "200"],
+                ans: 0,
+                explain: "Area = 1/2 × 9 × 40 = 180."
+            },
+            {
+                q: "Which triangle has the smallest area for a given perimeter?",
+                opts: ["Equilateral", "Scalene", "Obtuse", "Right"],
+                ans: 2,
+                explain: "Obtuse triangle."
+            },
+            {
+                q: "What is the value of cos(30°)?",
+                opts: ["0.5", "√3/2", "1", "0"],
+                ans: 1,
+                explain: "cos(30°) = √3/2."
+            },
+            {
+                q: "Which triangle can have all angles less than 60°?",
+                opts: ["Equilateral", "Scalene", "Acute", "Impossible"],
+                ans: 3,
+                explain: "Sum of angles is 180°, so can't have all angles < 60°."
+            },
+            {
+                q: "If a triangle has sides 7, 10, and 13, what is its area?",
+                opts: ["35", "32.5", "40", "45"],
+                ans: 1,
+                explain: "Use Heron's formula: s = (7+10+13)/2 = 15; area ≈ 32.5."
+            },
+            {
+                q: "If area = 36 and base = 9, height is?",
+                opts: ["4", "6", "8", "9"],
+                ans: 1,
+                explain: "Area = 1/2 × base × height ⇒ 36 = 4.5 × height ⇒ height = 8."
+            },
+            {
+                q: "If a triangle has angles 30°, 60°, and 90°, what is its type?",
+                opts: ["Acute", "Obtuse", "Right", "Equilateral"],
+                ans: 2,
+                explain: "One angle is 90°: right triangle."
+            },
+
+            // D - 25
+            {
+                q: "If two angles of a triangle are 30° and 60°, what is the third angle?",
+                opts: ["60°", "90°", "120°", "30°"],
+                ans: 1,
+                explain: "180° - (30° + 60°) = 90°."
+            },
+            {
+                q: "What is the value of sec(60°)?",
+                opts: ["2", "0.5", "1", "2/√3"],
+                ans: 3,
+                explain: "sec(60°) = 2/√3 in exact form."
+            },
+            {
+                q: "If a triangle has sides 7, 8, and 9, what is its perimeter?",
+                opts: ["24", "21", "18", "19"],
+                ans: 0,
+                explain: "Perimeter = 7 + 8 + 9 = 24."
+            },
+            {
+                q: "Which triangle has only acute angles?",
+                opts: ["Equilateral", "Scalene", "Acute", "Isosceles"],
+                ans: 2,
+                explain: "Acute triangle."
+            },
+            {
+                q: "If a triangle has sides 5, 5, and 8, what is its perimeter?",
+                opts: ["10", "15", "18", "13"],
+                ans: 2,
+                explain: "Perimeter = 5 + 5 + 8 = 18."
+            },
+            {
+                q: "If a triangle has sides 3, 4, and 5, what is its perimeter?",
+                opts: ["9", "11", "12", "10"],
+                ans: 2,
+                explain: "Perimeter = 3 + 4 + 5 = 12."
+            },
+            {
+                q: "A triangle has sides 4, 5, and 8. Is it possible?",
+                opts: ["Yes", "No", "Only if it is obtuse", "Only if it is right"],
+                ans: 0,
+                explain: "Sum of any two sides > third side; 4+5=9 > 8."
+            },
+            {
+                q: "If a triangle has sides 2, 3, and 5, can it exist?",
+                opts: ["Yes", "No", "Only if angles are acute", "Only if area is zero"],
+                ans: 1,
+                explain: "2+3=5 is not greater than 5; so it cannot exist."
+            },
+            {
+                q: "What is the median from the vertex of a triangle?",
+                opts: ["Two equal areas", "Two equal sides", "Three equal angles", "Three equal sides"],
+                ans: 0,
+                explain: "Median divides triangle into two equal areas."
+            },
+            {
+                q: "If base = 5 and height = 12, area is?",
+                opts: ["30", "60", "25", "15"],
+                ans: 0,
+                explain: "Area = 1/2 × 5 × 12 = 30."
+            },
+            {
+                q: "If base = 8 and area = 24, what is height?",
+                opts: ["3", "6", "4", "8"],
+                ans: 1,
+                explain: "Area = 1/2 × base × height ⇒ 24 = 4 × height ⇒ height = 6."
+            },
+            {
+                q: "What is the largest side of a right triangle called?",
+                opts: ["Base", "Perpendicular", "Hypotenuse", "Median"],
+                ans: 2,
+                explain: "Hypotenuse is the longest side in right triangle."
+            },
+            {
+                q: "If a triangle has sides 5, 12, and 13, what is its area?",
+                opts: ["30", "24", "32", "20"],
+                ans: 0,
+                explain: "Area = 1/2 × 5 × 12 = 30."
+            },
+            {
+                q: "If a triangle has sides 6, 8, and 10, what is its area?",
+                opts: ["24", "20", "16", "30"],
+                ans: 0,
+                explain: "Area = 1/2 × 6 × 8 = 24."
+            },
+            {
+                q: "What is the value of sin(30°)?",
+                opts: ["0.5", "√3/2", "1", "0"],
+                ans: 0,
+                explain: "sin(30°) = 0.5."
+            },
+            {
+                q: "Which triangle has the maximum area for a given perimeter?",
+                opts: ["Equilateral", "Isosceles", "Scalene", "Right"],
+                ans: 0,
+                explain: "Equilateral triangle."
+            },
+            {
+                q: "Which triangle has all angles equal?",
+                opts: ["Equilateral", "Isosceles", "Scalene", "Right"],
+                ans: 0,
+                explain: "Equilateral triangle: all angles equal."
+            },
+            {
+                q: "What is the value of cos(90°)?",
+                opts: ["0", "1", "-1", "0.5"],
+                ans: 0,
+                explain: "cos(90°) = 0."
+            },
+            {
+                q: "If a triangle has sides 2, 2, and 2, what is its type?",
+                opts: ["Equilateral", "Isosceles", "Scalene", "Obtuse"],
+                ans: 0,
+                explain: "All sides equal: equilateral."
+            },
+            {
+                q: "A triangle with all angles less than 90° is called?",
+                opts: ["Acute", "Equilateral", "Obtuse", "Right"],
+                ans: 0,
+                explain: "Acute triangle."
+            },
+            {
+                q: "Which triangle has three axes of symmetry?",
+                opts: ["Equilateral", "Isosceles", "Scalene", "Right"],
+                ans: 0,
+                explain: "Equilateral triangle."
+            },
+            {
+                q: "What is the sum of the interior angles of a triangle?",
+                opts: ["180°", "360°", "90°", "270°"],
+                ans: 0,
+                explain: "Sum of interior angles in any triangle is 180°."
+            },
+            {
+                q: "If a triangle has sides 5, 12, and 13, what is its area?",
+                opts: ["30", "24", "32", "20"],
+                ans: 0,
+                explain: "Area = 1/2 × 5 × 12 = 30."
+            },
+            {
+                q: "Which triangle has all sides equal?",
+                opts: ["Equilateral", "Isosceles", "Scalene", "Right"],
+                ans: 0,
+                explain: "Equilateral triangle has all sides equal."
+            }
+        ];
+
+        let quizState = {
+            idx: 0,
+            score: 0,
+            active: false,
+            order: []
+        };
+
+        function shuffle(arr) {
+            for (let i = arr.length - 1; i > 0; i--) {
+                const j = Math.floor(Math.random() * (i + 1));
+                [arr[i], arr[j]] = [arr[j], arr[i]];
+            }
+        }
+
+        function startQuiz() {
+            quizSection.style.display = "block";
+            output.style.display = "none";
+            inputContainer.style.display = "none";
+            menuContainer.style.display = "none";
+            history.style.display = "none";
+            status.textContent = "Quiz in progress";
+            quizState.idx = 0;
+            quizState.score = 0;
+            quizState.active = true;
+            quizState.order = Array.from(Array(quizQuestions.length).keys());
+            shuffle(quizState.order);
+            showQuizQ();
+        }
+
+        // MODIFIED showQuizQ to include Quit Quiz button
+        function showQuizQ() {
+            const qIdx = quizState.order[quizState.idx];
+            const q = quizQuestions[qIdx];
+            quizSection.innerHTML = `
+                <div class="quiz-q">Q${quizState.idx+1}. ${q.q}</div>
+                <ul class="quiz-opt-list">
+                    ${q.opts.map((opt, i) => `<li><button class="quiz-opt-btn" data-idx="${i}">${opt}</button></li>`).join("")}
+                </ul>
+                <div class="quiz-score">Score: ${quizState.score} / ${quizState.idx}</div>
+                <div class="quiz-feedback" id="quizFeedback"></div>
+                <button class="quiz-quit-btn" id="quizQuitBtn">Quit Quiz</button>
+            `;
+            document.querySelectorAll('.quiz-opt-btn').forEach(btn => {
+                btn.onclick = function() {
+                    checkQuizAnswer(parseInt(this.dataset.idx));
+                };
+            });
+            document.getElementById('quizQuitBtn').onclick = exitQuiz;
+        }
+
+        function checkQuizAnswer(optIdx) {
+            if (!quizState.active) return;
+            const qIdx = quizState.order[quizState.idx];
+            const q = quizQuestions[qIdx];
+            const feedback = document.getElementById('quizFeedback');
+            if (optIdx === q.ans) {
+                feedback.innerHTML = `<span style="color:green">Correct!</span> ${q.explain}`;
+                quizState.score++;
+            } else {
+                feedback.innerHTML = `<span style="color:red">Incorrect.</span> Correct answer: <b>${q.opts[q.ans]}</b>. ${q.explain}`;
+            }
+            quizState.idx++;
+            quizState.active = false;
+            quizSection.innerHTML += `<button class="quiz-next-btn" id="quizNextBtn">${quizState.idx < quizQuestions.length ? 'Next Question' : 'See Results'}</button>`;
+            // Add Quit button also after answer
+            quizSection.innerHTML += `<button class="quiz-quit-btn" id="quizQuitBtn2">Quit Quiz</button>`;
+            document.getElementById('quizNextBtn').onclick = nextQuizStep;
+            document.getElementById('quizQuitBtn2').onclick = exitQuiz;
+        }
+
+        function nextQuizStep() {
+            if (quizState.idx < quizQuestions.length) {
+                quizState.active = true;
+                showQuizQ();
+            } else {
+                endQuiz();
+            }
+        }
+
+        // MODIFIED endQuiz to include Quit Quiz button
+        function endQuiz() {
+            quizSection.innerHTML = `
+                <div class="quiz-score">Final Score: ${quizState.score} / ${quizQuestions.length}</div>
+                <div style="margin-top:15px;">
+                    <button class="quiz-next-btn" onclick="restartQuiz()">Restart Quiz</button>
+                    <button class="quiz-next-btn" onclick="exitQuiz()">Exit Quiz</button>
+                    <button class="quiz-quit-btn" id="quizQuitBtn3">Quit Quiz</button>
+                </div>
+            `;
+            document.getElementById('quizQuitBtn3').onclick = exitQuiz;
+            status.textContent = 'Quiz complete';
+        }
+
+        window.restartQuiz = function() {
+            startQuiz();
+        }
+        window.exitQuiz = function() {
+            quizSection.style.display = "none";
+            output.style.display = "";
+            history.style.display = "";
+            status.textContent = "Ready to start";
+            quizState.active = false;
+        }
+
+        startQuizBtn.addEventListener('click', () => {
+            startQuiz();
+        });
+    </script>
+</body>
+</html>
